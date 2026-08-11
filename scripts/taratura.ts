@@ -8,29 +8,9 @@
   Requisiti: ANTHROPIC_API_KEY in .env.local (o nell'ambiente).
 */
 
-import { readFileSync, writeFileSync, existsSync } from "fs";
+import "./carica-env";
+import { writeFileSync } from "fs";
 import path from "path";
-
-/* Mini loader di .env.local: niente dipendenze extra */
-function caricaEnvLocale() {
-  const percorso = path.join(process.cwd(), ".env.local");
-  if (!existsSync(percorso)) return;
-  for (const riga of readFileSync(percorso, "utf8").split("\n")) {
-    const pulita = riga.trim();
-    if (!pulita || pulita.startsWith("#")) continue;
-    const uguale = pulita.indexOf("=");
-    if (uguale === -1) continue;
-    const chiave = pulita.slice(0, uguale).trim();
-    const valore = pulita
-      .slice(uguale + 1)
-      .trim()
-      .replace(/^["']|["']$/g, "");
-    if (!(chiave in process.env)) process.env[chiave] = valore;
-  }
-}
-
-caricaEnvLocale();
-
 import { valutaFrase } from "../lib/ai";
 import { normalizzaFrase } from "../lib/normalize";
 import {

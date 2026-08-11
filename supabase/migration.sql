@@ -73,6 +73,7 @@ create or replace function check_rate_limit(
   p_ip_limit int
 ) returns boolean
 language plpgsql
+set search_path = public, pg_temp
 as $$
 declare
   v_window timestamptz := date_trunc('hour', now());
@@ -112,7 +113,12 @@ alter table comments enable row level security;
 alter table quiz_sessions enable row level security;
 alter table rate_limits enable row level security;
 
-revoke execute on function check_rate_limit(text, text, text, int, int) from anon, authenticated;
+-- Il permesso di execute sulle funzioni arriva di default dal ruolo PUBLIC:
+-- va revocato da li', poi si riconcede esplicitamente al solo server.
+revoke execute on function check_rate_limit(text, text, text, int, int)
+  from public, anon, authenticated;
+grant execute on function check_rate_limit(text, text, text, int, int)
+  to service_role;
 
 -- ============================================================
 -- Pulizia automatica, coerente con l'informativa privacy della

@@ -37,6 +37,8 @@ const PAROLE_ESATTE = new Set<string>([
   "zingara",
   "zingari",
   "zingare",
+  "mongoloide",
+  "mongoloidi",
   // sesso esplicito, forme inequivocabili
   "pompino",
   "pompini",
@@ -56,7 +58,7 @@ const PAROLE_ESATTE = new Set<string>([
   "cunt",
   "cunts",
   "kike",
-  "spic",
+  // "spic" resta fuori: collide con l'espressione italiana "spic e span"
 ]);
 
 /* Radici bloccate: catturano intere famiglie di parole */
