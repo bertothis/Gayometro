@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+/*
+  Design system "retro rustic neobrutalism + pixel 8 bit".
+  Colori e regole della sezione 7 del brief: carta crema, inchiostro,
+  lime elettrico, ruggine, salvia. Ombre dure senza blur, bordi 2px.
+*/
+@theme {
+  --color-paper: #faf4e6;
+  --color-card: #fffbf0;
+  --color-ink: #1c2418;
+  --color-lime: #c8f04b;
+  --color-rust: #c4502e;
+  --color-sage: #9ba88d;
+
+  --shadow-hard: 4px 4px 0 0 #1c2418;
+  --shadow-hard-sm: 2px 2px 0 0 #1c2418;
+  --shadow-hard-lg: 6px 6px 0 0 #1c2418;
+}
+
+/* I font arrivano da next/font come CSS variables, quindi il blocco e' inline */
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-pixel: var(--font-silkscreen), ui-monospace, monospace;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background-color: var(--color-lime);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+@layer components {
+  /* Bottone pill neobrutalista con hover "push-in": trasla e accorcia l'ombra */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 2px solid var(--color-ink);
+    border-radius: 9999px;
+    background-color: var(--color-lime);
+    padding: 0.75rem 1.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-ink);
+    box-shadow: var(--shadow-hard);
+    cursor: pointer;
+    user-select: none;
+    transition:
+      transform 100ms ease,
+      box-shadow 100ms ease;
+  }
+  .btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: var(--shadow-hard-sm);
+  }
+  .btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .btn-paper {
+    background-color: var(--color-card);
+  }
+  .btn-rust {
+    background-color: var(--color-rust);
+    color: var(--color-paper);
+  }
+
+  .card {
+    background-color: var(--color-card);
+    border: 2px solid var(--color-ink);
+    box-shadow: var(--shadow-hard);
+  }
+
+  .input-brut {
+    width: 100%;
+    border: 2px solid var(--color-ink);
+    background-color: var(--color-card);
+    padding: 0.875rem 1.25rem;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    color: var(--color-ink);
+    box-shadow: var(--shadow-hard);
+  }
+  .input-brut::placeholder {
+    color: color-mix(in srgb, var(--color-ink) 45%, var(--color-paper));
+  }
+
+  /* Etichetta pixel per percentuali e dettagli 8 bit */
+  .pixel-label {
+    font-family: var(--font-pixel);
+    letter-spacing: 0.02em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .btn:hover,
+  .btn:active {
+    transition: none;
+  }
+}
