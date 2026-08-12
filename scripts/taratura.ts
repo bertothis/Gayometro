@@ -33,6 +33,7 @@ const BATTERIA: Caso[] = [
   { gruppo: "alta", frase: "ordinare lo spritz al bar dello stadio", atteso: "alto" },
   { gruppo: "alta", frase: "farsi le sopracciglia", atteso: "alto" },
   { gruppo: "alta", frase: "mandare i vocali di cinque minuti", atteso: "alto" },
+  { gruppo: "alta", frase: "giocare a padel", atteso: "82-92" },
 
   // ---- Attese percentuali BASSE ----
   { gruppo: "bassa", frase: "bere whisky liscio", atteso: "basso" },

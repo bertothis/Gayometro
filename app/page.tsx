@@ -55,6 +55,21 @@ export default async function Home() {
         </div>
       </section>
 
+      <section className="card flex flex-col gap-4 bg-lime px-6 py-6 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="font-display text-3xl font-black">
+            Quanto sei gay, <em>tu</em>?
+          </h2>
+          <p className="mt-1 max-w-prose">
+            Quindici domande, verdetto inappellabile, immagine da sventolare
+            in chat. Due minuti, zero scampo.
+          </p>
+        </div>
+        <Link href="/quiz" className="btn btn-paper shrink-0 self-start text-base sm:self-center">
+          Fai il quiz
+        </Link>
+      </section>
+
       <section className="card px-6 py-6 sm:px-8 sm:py-8">
         <GayometroForm />
       </section>
@@ -87,18 +102,6 @@ export default async function Home() {
         )}
       </section>
 
-      <section className="card flex flex-col items-start gap-3 px-6 py-6">
-        <h2 className="font-display text-2xl font-black">
-          Quanto sei gay <em>tu</em>?
-        </h2>
-        <p className="max-w-prose">
-          Quindici domande, un algoritmo spietato, un risultato da incorniciare
-          o da nascondere. Il quiz è gratuito, la verità non ha prezzo.
-        </p>
-        <Link href="/quiz" className="btn">
-          Fai il quiz
-        </Link>
-      </section>
     </div>
   );
 }

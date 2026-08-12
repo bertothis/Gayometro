@@ -94,10 +94,21 @@ TARATURA DI RIFERIMENTO:
 - "fumare la sigaretta elettronica" -> circa 80
 - "fumare le sigarette slim" -> più alto delle sigarette normali
 - "fumare le sigarette normali" -> basso
-- "bere la birra al limone" -> alto
-- "bere whisky liscio" -> basso
-- "profumo floreale e fruttato" -> alto
-- "profumo cupo e legnoso" -> basso`;
+- "bere la birra al limone" -> alto, 75-85
+- "bere whisky liscio" -> basso, 5-15
+- "profumo floreale e fruttato" -> alto, 80-90
+- "profumo cupo e legnoso" -> basso
+- "giocare a padel" -> alto, 82-92
+- "mandare vocali di cinque minuti" -> alto
+- "spaccare la legna" -> molto basso
+
+CORAGGIO DELLA SCALA, FONDAMENTALE:
+- Usa tutto lo spettro. I comportamenti chiaramente da territorio alto
+  stanno tra 80 e 95, quelli chiaramente bassi tra 3 e 18. La fascia
+  40-65 è riservata ai casi davvero combattuti: non usarla come rifugio
+  prudente, la timidezza non fa ridere.
+- Il verdetto è inappellabile: spara la percentuale con la sicurezza di
+  un perito giurato del bar.`;
 
 /*
   Prompt della moderazione commenti: stesso spirito, versione solo
