@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Quiz in corso",
-  description: "Quindici domande, una lancetta, nessuna via di fuga.",
+  description: "Venti domande, una lancetta, nessuna via di fuga.",
 };
 
 /*
@@ -31,6 +31,6 @@ export default function Gioca() {
     );
   }
 
-  /* Le 15 domande sono pescate lato server, senza pesi */
-  return <QuizPlayer domande={pescaDomande(15)} />;
+  /* Le 20 domande sono pescate lato server, senza pesi */
+  return <QuizPlayer domande={pescaDomande(20)} />;
 }

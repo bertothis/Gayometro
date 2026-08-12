@@ -12,7 +12,7 @@ import type { RispostaQuiz } from "@/lib/types";
   ricalcola i pesi dai dati propri, mai da valori inviati dal client.
 */
 
-const DOMANDE_RICHIESTE = 15;
+const DOMANDE_RICHIESTE = 20;
 
 function errore(messaggio: string, status: number): NextResponse<RispostaQuiz> {
   return NextResponse.json({ stato: "errore", messaggio }, { status });
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (!Array.isArray(body.risposte) || body.risposte.length !== DOMANDE_RICHIESTE) {
-    return errore("Servono esattamente 15 risposte.", 400);
+    return errore(`Servono esattamente ${DOMANDE_RICHIESTE} risposte.`, 400);
   }
 
   const risposte: Array<{ domanda: string; opzione: string }> = [];

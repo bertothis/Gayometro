@@ -10,9 +10,11 @@ Tre funzionalità:
 
 1. **Gayometro**: scrivi una frase, ricevi percentuale, verdetto e
    motivazione generati dall'AI. Stessa frase, stesso risultato, per sempre.
-2. **Bacheca**: tutte le frasi valutate sono pubbliche, ognuna con un
-   thread di commenti aperto a chiunque, con nickname libero.
-3. **Quiz "Quanto sei gay?"**: 15 domande pescate da un pool di 60,
+2. **Bacheca**: le classifiche pubbliche delle 10 frasi più gay e delle
+   10 meno gay; ogni frase ha la sua pagina con thread di commenti aperto
+   a chiunque, con nickname libero. L'archivio completo vive nel pannello
+   admin nascosto.
+3. **Quiz "Quanto sei gay?"**: 20 domande pescate da un pool di 120,
    risultato animato e immagine condivisibile. Zero chiamate AI, costo zero.
 
 Stack: Next.js (App Router) + TypeScript + Tailwind CSS v4, Supabase
@@ -66,6 +68,7 @@ server: mai nel browser, mai committata.
 | `SUPABASE_URL` | sì | URL del progetto Supabase |
 | `SUPABASE_SERVICE_ROLE_KEY` | sì | Chiave service role (segreta) |
 | `IP_HASH_SALT` | sì | Stringa lunga casuale qualsiasi: sala l'hash degli IP per l'antispam |
+| `ADMIN_SECRET` | sì | Chiave del pannello nascosto `/admin` (minimo 8 caratteri, consigliata lunga e casuale) |
 | `QUIZ_GATE` | no | `off` in v1. Predisposizione del futuro sblocco quiz (sezione paywall) |
 | `NEXT_PUBLIC_DONATION_URL` | no | Link esterno donazioni (Ko-fi, PayPal.me...). Se vuoto, nessun touchpoint donazioni appare |
 | `NEXT_PUBLIC_SITE_URL` | sì | URL pubblico del sito (in locale `http://localhost:3000`), usato da metadata e card OG |
@@ -135,9 +138,28 @@ Serve il client `pg_dump` installato (su Mac: `brew install libpq`).
 Conserva i file da qualche parte di sicuro: per ripristinare basta
 eseguire il file sql su un progetto nuovo.
 
-## Moderazione manuale dalla dashboard Supabase
+## Pannello admin nascosto (/admin)
 
-Tutto si modera dal `Table Editor`, senza pannello admin:
+Il pannello del titolare non ha login né link: per chiunque non abbia il
+cookie risponde 404, come una pagina inesistente.
+
+- **Primo accesso**: visita `https://tuo-dominio/admin?chiave=ADMIN_SECRET`
+  (il valore impostato nella env). Il sito scambia la chiave con un cookie
+  httpOnly di 30 giorni e ripulisce l'URL: da lì in poi basta `/admin`.
+- **Cosa contiene**: l'archivio completo delle frasi (Recenti, Più gay,
+  Meno gay, ricerca, paginazione) e tutti i commenti del sito, flaggati
+  inclusi.
+- **Comandi per frase**: correggere la percentuale a mano, far rivalutare
+  la frase dal motore col prompt attuale (aggiorna anche il commento
+  ufficiale del Gayometro), nasconderla o ripristinarla, eliminarla per
+  sempre (alla prossima richiesta verrà rivalutata da zero).
+- **Comandi per commento**: nascondere, ripristinare, eliminare.
+- Tienilo per te: chi conosce la chiave entra. Se la chiave gira, cambiala
+  nella env e rientra con la nuova.
+
+## Moderazione manuale dalla dashboard Supabase (alternativa)
+
+Tutto resta moderabile anche dal `Table Editor` di Supabase:
 
 - **Frase da nascondere**: tabella `phrases`, trova la riga, metti
   `flagged = true`. Sparisce da home, bacheca e pagina dedicata, e non
@@ -150,9 +172,10 @@ Tutto si modera dal `Table Editor`, senza pannello admin:
 
 ## Modificare domande del quiz e blocklist
 
-- **Domande**: `lib/quiz-questions.ts`, pool di 60 con pesi da -2 a +2
-  per opzione. Le fasce di risultato sono in `lib/quiz-bands.ts`. Dopo la
-  modifica: commit e deploy, nessun altro passaggio.
+- **Domande**: `lib/quiz-questions.ts`, pool di 120 con pesi da -2 a +2
+  per opzione (ogni sessione ne pesca 20). Le fasce di risultato sono in
+  `lib/quiz-bands.ts`. Dopo la modifica: commit e deploy, nessun altro
+  passaggio.
 - **Blocklist**: `lib/blocklist.ts`, divisa tra forme esatte e radici.
   Contiene solo termini inequivocabili: le parole ambigue (finocchio,
   sega...) le giudica l'AI col contesto, per non bloccare frasi legittime.
@@ -196,8 +219,10 @@ Tutto si modera dal `Table Editor`, senza pannello admin:
 - [ ] Commento con insulto: rifiutato con messaggio leggero
 - [ ] Rate limit: oltre 30 valutazioni in un'ora scatta il messaggio di
       pausa
-- [ ] Quiz completo da mobile: 15 domande, barra di avanzamento,
+- [ ] Quiz completo da mobile: 20 domande, barra di avanzamento,
       risultato animato
+- [ ] Pannello admin: /admin risponde 404 senza cookie, entra con
+      ?chiave=, rivalutazione e correzione percentuale funzionano
 - [ ] Immagine risultato scaricata e condivisa su WhatsApp con anteprima
       OG corretta
 - [ ] `/api/keep-alive` risponde 200

@@ -34,19 +34,19 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col gap-12">
-      <section className="flex flex-col gap-5">
+      <section className="flex flex-col items-center gap-5 text-center">
         <p className="pixel-label text-xs uppercase text-rust">
           Precisione certificata 73%
         </p>
         <h1 className="font-display text-5xl font-black leading-[1.05] tracking-tight sm:text-6xl">
-          Quanto è <em className="text-rust">gay</em>?
+          Quanto sei <em className="text-rust">gay</em>?
         </h1>
         <p className="max-w-prose text-lg">
-          Scrivi un comportamento, un oggetto, un&rsquo;abitudine. Il Gayometro
-          emette il verdetto: percentuale esatta, motivazione fulminante, zero
-          possibilità di ricorso.
+          Il Gayometro emette verdetti con percentuale esatta e zero
+          possibilità di ricorso. E se il numero esce altissimo, pensaci bene
+          prima di girarlo agli amici: certe cifre il gruppo non le dimentica.
         </p>
-        <div className="flex items-center gap-4 text-ink/80">
+        <div className="flex items-center justify-center gap-4 text-ink/80">
           <Sigaretta className="w-10" />
           <Boccale className="w-8" />
           <Profumo className="w-8" />
@@ -58,11 +58,11 @@ export default async function Home() {
       <section className="card flex flex-col gap-4 bg-lime px-6 py-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="font-display text-3xl font-black">
-            Quanto sei gay, <em>tu</em>?
+            Il test definitivo
           </h2>
           <p className="mt-1 max-w-prose">
-            Quindici domande, verdetto inappellabile, immagine da sventolare
-            in chat. Due minuti, zero scampo.
+            Venti domande, verdetto inappellabile, immagine da sventolare in
+            chat. Due minuti, zero scampo.
           </p>
         </div>
         <Link href="/quiz" className="btn btn-paper shrink-0 self-start text-base sm:self-center">

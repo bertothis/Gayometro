@@ -5,7 +5,7 @@ import { Boccale, Fiamma, Stellina } from "@/components/pixel/doodles";
 export const metadata: Metadata = {
   title: "Quiz: quanto sei gay?",
   description:
-    "Quindici domande ironiche, un algoritmo spietato, una percentuale definitiva. Il quiz del Gayometro.",
+    "Venti domande ironiche, un algoritmo spietato, una percentuale definitiva. Il quiz del Gayometro.",
 };
 
 export default function IntroQuiz() {
@@ -19,7 +19,7 @@ export default function IntroQuiz() {
           Quanto sei <em className="text-rust">gay</em>?
         </h1>
         <p className="text-lg">
-          Quindici domande pescate a caso da un archivio scientificamente
+          Venti domande pescate a caso da un archivio scientificamente
           discutibile. Alla fine: percentuale esatta, fascia di appartenenza e
           immagine da sventolare nel gruppo.
         </p>
@@ -51,7 +51,7 @@ export default function IntroQuiz() {
           Inizia il quiz
         </Link>
         <p className="text-xs text-ink/60">
-          Gratis, anonimo, quindici domande. Nessuna registrazione.
+          Gratis, anonimo, venti domande. Nessuna registrazione.
         </p>
       </div>
     </div>

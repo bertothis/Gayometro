@@ -1,6 +1,6 @@
 /*
-  Pool delle 60 domande del quiz "Quanto sei gay?" (sezione 6 del brief).
-  Ogni sessione ne pesca 15 a caso. Zero chiamate AI: costi zero.
+  Pool delle 120 domande del quiz "Quanto sei gay?".
+  Ogni sessione ne pesca 20 a caso. Zero chiamate AI: costi zero.
 
   Registro comico della sezione 1.1: il bersaglio è l'ansia da maschio
   alfa e l'assurdità di misurare queste cose, mai le persone omosessuali.
@@ -321,6 +321,267 @@ export const DOMANDE: DomandaQuiz[] = [
     ["Boh, sono qui per scoprirlo", 1],
     ["Le percentuali le decide il Gayometro", 2],
   ]),
+  d("q61", "Il caffè al ginseng:", [
+    ["Un insulto alla moka", -1],
+    ["Tazza grande, e godo", 2],
+  ]),
+  d("q62", "In spiaggia stendi:", [
+    ["Il telo della squadra", -1],
+    ["Telo coordinato col costume", 2],
+    ["Niente, sabbia diretta", -2],
+  ]),
+  d("q63", "Quando canti in macchina da solo:", [
+    ["Non canto nemmeno da solo", -2],
+    ["Canto e faccio pure le seconde voci", 2],
+  ]),
+  d("q64", "La borraccia:", [
+    ["Bottiglietta del super riusata da mesi", -1],
+    ["Pastello, con gli adesivi", 2],
+    ["Bevo quando capita, dove capita", -2],
+  ]),
+  d("q65", "Ti fanno un complimento:", [
+    ["Cambio discorso, imbarazzo totale", -1],
+    ["Ringrazio e rilancio con un complimento mirato", 2],
+  ]),
+  d("q66", "La tua foto profilo:", [
+    ["La stessa dal 2016", -2],
+    ["Aggiornata a ogni stagione, con direzione creativa", 2],
+    ["Non ho foto profilo", -1],
+  ]),
+  d("q67", "Ikea con gli amici:", [
+    ["Entro, prendo i tasselli, esco", -1],
+    ["È una gita: polpette, reparto candele, lista desideri", 2],
+  ]),
+  d("q68", "Gli stivaletti chelsea:", [
+    ["Cosa sono?", -2],
+    ["Ne ho due paia, ovvio", 2],
+  ]),
+  d("q69", "La montagna per te:", [
+    ["Ferrata all'alba, in silenzio", -2],
+    ["Baita instagrammabile con plaid", 2],
+    ["Rifugio, grappa e briscola", -1],
+  ]),
+  d("q70", "Lo schermo del tuo telefono:", [
+    ["Crepato da mesi, funziona uguale", -2],
+    ["Pellicola perfetta e cover coordinata", 2],
+  ]),
+  d("q71", "Compleanno di un amico:", [
+    ["Bonifico e pacca sulla spalla", -1],
+    ["Regalo pensato con mesi di anticipo e biglietto scritto a mano", 2],
+  ]),
+  d("q72", "Lo smalto:", [
+    ["Manco morto", -2],
+    ["Trasparente rinforzante, e allora?", 2],
+    ["Una volta, per scommessa", 1],
+  ]),
+  d("q73", "La piadina perfetta:", [
+    ["Salsiccia e cipolla", -1],
+    ["Crudo, squacquerone e rucola con balsamico a filo", 2],
+  ]),
+  d("q74", "Serie doppiata o in lingua?", [
+    ["Doppiata, non pago per leggere", -1],
+    ["Lingua originale, ovviamente", 2],
+  ]),
+  d("q75", "Le ciabatte:", [
+    ["Di gomma da mare, tutto l'anno", -2],
+    ["Pantofole di casa, anche per gli ospiti", 1],
+    ["Mule di design", 2],
+  ]),
+  d("q76", "Un weekend libero:", [
+    ["Garage e motori", -2],
+    ["Cittadina europea con itinerario salvato nelle note", 2],
+    ["Divano e console", -1],
+  ]),
+  d("q77", "Il cameriere sbaglia l'ordine:", [
+    ["Pazienza, mangio quello che arriva", 0],
+    ["Lo segnalo con garbo chirurgico", 2],
+    ["Parte la scenata", -2],
+  ]),
+  d("q78", "I tuoi calzini:", [
+    ["Bianchi da tennis, con tutto", -2],
+    ["Fantasia, coordinati all'outfit", 2],
+    ["Neri e basta", 0],
+  ]),
+  d("q79", "Festa a tema:", [
+    ["Non mi travesto, mai", -2],
+    ["Arrivo con l'outfit più curato della serata", 2],
+  ]),
+  d("q80", "Lo yoga:", [
+    ["Roba per gente che ha tempo", -2],
+    ["Ci vado e ho il mio tappetino", 2],
+    ["Solo stretching dopo la partita", 0],
+  ]),
+  d("q81", "Fine cena:", [
+    ["Amaro, sempre amaro", -1],
+    ["Bollicine, brindisi e foto di gruppo", 2],
+  ]),
+  d("q82", "Playlist condivise:", [
+    ["Mai fatta una", -1],
+    ["Ne curo tre, con dedizione", 2],
+  ]),
+  d("q83", "Quando piove forte:", [
+    ["Cappuccio e via", -2],
+    ["Ombrello serio e scarpe salvate a ogni costo", 2],
+  ]),
+  d("q84", "Casa nuova di un amico:", [
+    ["Porto le birre", 0],
+    ["Porto una pianta col biglietto", 2],
+    ["Non porto niente, ci mancherebbe", -2],
+  ]),
+  d("q85", "Il tuo Spotify Wrapped:", [
+    ["Non lo condivido, fatti miei", -1],
+    ["Lo impagino e lo commento pubblicamente", 2],
+  ]),
+  d("q86", "Giacca per l'autunno:", [
+    ["Giaccone da lavoro", -2],
+    ["Trench", 2],
+    ["Bomber vintage", 1],
+  ]),
+  d("q87", "Il gelato:", [
+    ["Cono, due gusti, classici", 0],
+    ["Coppetta pistacchio con degustazione critica", 2],
+    ["Non mangio gelato", -2],
+  ]),
+  d("q88", "Differenza tra écru e panna:", [
+    ["Non esiste e sto bene così", -2],
+    ["Esiste eccome, e c'è anche l'avorio", 2],
+  ]),
+  d("q89", "Falò in spiaggia:", [
+    ["Chitarra e cori da stadio", -1],
+    ["Coperte, lucine e playlist studiata", 2],
+  ]),
+  d("q90", "Il barbiere ti propone un trattamento nuovo:", [
+    ["No, taglio e basta", -1],
+    ["Dimmi tutto, sono curioso", 2],
+  ]),
+  d("q91", "L'assaggio del vino al ristorante:", [
+    ["Mi imbarazza, saltiamo", -1],
+    ["Roteo il calice e annuisco da sommelier", 2],
+  ]),
+  d("q92", "La borsa della palestra:", [
+    ["Busta del supermercato", -2],
+    ["Borsone tecnico con scomparto scarpe", 1],
+    ["Borsa dedicata, beauty incluso", 2],
+  ]),
+  d("q93", "Piangere a un matrimonio:", [
+    ["Mai successo", -2],
+    ["A ogni discorso", 2],
+    ["Solo di nascosto", 1],
+  ]),
+  d("q94", "L'acqua al bar:", [
+    ["Naturale, che domande", -1],
+    ["Frizzante, vivace", 1],
+    ["Con ghiaccio e fetta di limone anche a gennaio", 2],
+  ]),
+  d("q95", "Le tue storie Instagram:", [
+    ["Non esisto sui social", -1],
+    ["Tramonti con font scelto a mano", 2],
+    ["Repost di meme", 0],
+  ]),
+  d("q96", "Un amico chiede un parere sull'outfit:", [
+    ["Boh, uguale", -2],
+    ["Consulenza completa con alternative", 2],
+  ]),
+  d("q97", "Il ghiaccio nei drink:", [
+    ["Quello del congelatore, a caso", -1],
+    ["Cubo grande singolo, come nei bar seri", 2],
+  ]),
+  d("q98", "Le tovagliette all'americana:", [
+    ["Si mangia sul tavolo", -2],
+    ["Coordinate ai piatti", 2],
+  ]),
+  d("q99", "Ordinare per il tavolo:", [
+    ["Ognuno per sé", -1],
+    ["Prendo io la regia: condivisione e assaggi per tutti", 2],
+  ]),
+  d("q100", "Stirare una camicia:", [
+    ["Non so e non voglio imparare", -2],
+    ["Colletto e polsini perfetti", 2],
+    ["La porto in lavanderia", 1],
+  ]),
+  d("q101", "Il campeggio:", [
+    ["Tenda, coltello, fuoco", -2],
+    ["Glamping con lucine", 2],
+    ["Mai dormito fuori", 0],
+  ]),
+  d("q102", "Auguri di compleanno in chat:", [
+    ["Auguri, punto", -2],
+    ["Messaggio personalizzato con ricordo ed emoji scelte", 2],
+  ]),
+  d("q103", "Un pomeriggio ai saldi:", [
+    ["Incubo, aspetto fuori", -2],
+    ["Strategia, lista e percorso studiato", 2],
+  ]),
+  d("q104", "Il tuo toast:", [
+    ["Prosciutto e formaggio, e via", -1],
+    ["Avocado con uovo in camicia", 2],
+  ]),
+  d("q105", "Coreografie:", [
+    ["Non ne conosco manco una", -1],
+    ["Ne so una a memoria e ai matrimoni parte da sola", 2],
+  ]),
+  d("q106", "Le lucine in camera:", [
+    ["Roba da adolescenti", -1],
+    ["Calde, dimmerabili, atmosfera", 2],
+  ]),
+  d("q107", "Come scegli il ristorante:", [
+    ["Il primo aperto", -2],
+    ["Recensioni, menu studiato, prenotazione", 2],
+  ]),
+  d("q108", "La tazza della colazione:", [
+    ["Una vale l'altra", -1],
+    ["Ho LA tazza, e guai a chi la tocca", 2],
+  ]),
+  d("q109", "I mercatini di Natale:", [
+    ["Ressa e vin brulé sopravvalutato", -1],
+    ["Itinerario, programma e cioccolata calda", 2],
+  ]),
+  d("q110", "La raccolta differenziata:", [
+    ["Più o meno", -1],
+    ["Rigore svizzero e contenitori etichettati", 2],
+  ]),
+  d("q111", "Musica in allenamento:", [
+    ["No: solo ferro e respiro", -2],
+    ["Playlist pump con transizioni curate", 2],
+  ]),
+  d("q112", "La tua firma:", [
+    ["Uno scarabocchio veloce", -1],
+    ["Studiata, con svolazzo finale", 2],
+  ]),
+  d("q113", "I pancake:", [
+    ["Colazione da bar, non cucino", -1],
+    ["Pila perfetta e sciroppo, foto di rito", 2],
+  ]),
+  d("q114", "Gli occhiali da vista:", [
+    ["Li evito finché posso", -1],
+    ["Montatura scelta come accessorio", 2],
+  ]),
+  d("q115", "Lavare la macchina:", [
+    ["Ci pensa la pioggia", -1],
+    ["Idropulitrice domenicale, rito sacro", -2],
+    ["Interni profumati alla vaniglia e specchietti lucidi", 2],
+  ]),
+  d("q116", "Un ballo lento:", [
+    ["Mi siedo e aspetto che passi", -2],
+    ["Guido io, con eleganza", 2],
+  ]),
+  d("q117", "Le spezie in cucina:", [
+    ["Sale e pepe, fine della lista", -2],
+    ["Scaffale dedicato con etichette scritte bene", 2],
+  ]),
+  d("q118", "La tua agenda:", [
+    ["Tutto a memoria", -1],
+    ["Planner con colori per categoria", 2],
+  ]),
+  d("q119", "Il pigiama:", [
+    ["Boxer e maglietta sformata", -1],
+    ["Completo coordinato, anche d'estate", 2],
+  ]),
+  d("q120", "Chiusura: consiglieresti questo quiz agli amici?", [
+    ["No, e cancello pure la cronologia", -2],
+    ["Già girato nel gruppo, con sfida aperta", 2],
+    ["Solo a chi può reggere il confronto", 1],
+  ]),
 ];
 
 const INDICE = new Map(DOMANDE.map((domanda) => [domanda.id, domanda]));
@@ -336,7 +597,7 @@ export type DomandaServita = {
   opzioni: Array<{ id: string; testo: string }>;
 };
 
-export function pescaDomande(quante = 15): DomandaServita[] {
+export function pescaDomande(quante = 20): DomandaServita[] {
   const mazzo = [...DOMANDE];
   for (let i = mazzo.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
