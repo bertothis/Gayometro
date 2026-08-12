@@ -43,9 +43,11 @@ export default function ResultReveal({
 
   useEffect(() => {
     if (preferisceMenoMovimento()) {
-      setBarra(score);
-      setSvelato(true);
-      return;
+      rafRef.current = requestAnimationFrame(() => {
+        setBarra(score);
+        setSvelato(true);
+      });
+      return () => cancelAnimationFrame(rafRef.current);
     }
     const durata = 1800;
     const inizio = performance.now();
