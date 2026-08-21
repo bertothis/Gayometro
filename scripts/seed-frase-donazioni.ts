@@ -12,10 +12,30 @@
 */
 
 import "./carica-env";
-import { getDb } from "../lib/db";
+import { createClient } from "@supabase/supabase-js";
 import { normalizzaFrase, slugify } from "../lib/normalize";
 import { SLUG_FRASE_DONAZIONI } from "../lib/frase-donazioni";
 import type { FraseRow } from "../lib/types";
+
+/*
+  Client Supabase dedicato allo script: lib/db.ts e' protetto da
+  "server-only" per impedire che la service role key finisca mai in un
+  bundle client di Next.js. Questo script gira fuori da Next (via tsx),
+  quindi quel guard lo farebbe fallire subito all'import: qui si crea un
+  client equivalente senza passare da li'.
+*/
+function getDb() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) {
+    throw new Error(
+      "Config mancante: servono SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY in .env.local"
+    );
+  }
+  return createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+}
 
 const FRASE_ORIGINALE = "chi non supporta questo sito";
 const PERCENT = 83;

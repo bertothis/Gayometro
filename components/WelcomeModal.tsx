@@ -41,16 +41,10 @@ export default function WelcomeModal() {
           Qui non si misura nessuno sul serio
         </h2>
         <p className="text-sm">
-          Il Gayometro prende in giro l&rsquo;ansia da mascolinità, non le
-          persone gay: qui si processa il ridicolo di chi ha bisogno di una
-          percentuale per sentirsi un uomo vero. Verdetti finti, precisione
-          finta, sicurezza assoluta.
-        </p>
-        <p className="text-sm">
-          Si giudicano abitudini e oggetti, mai persone reali, e la battuta
-          funziona solo se resta leggera: se qualcosa ti sembra fuori tono,
-          scrivilo dalla pagina Info. Il posto giusto per usarlo è il gruppo
-          con gli amici, non un tribunale.
+          Il Gayometro prende in giro l&rsquo;ansia da mascolinità, mai le
+          persone gay. Percentuali finte e verdetti finti su abitudini e
+          oggetti, mai su persone reali. Usalo per ridere con il gruppo, non
+          per fare sul serio.
         </p>
         <button type="button" onClick={chiudi} className="btn mt-2 w-full">
           Ho capito, lasciami prendere ora per il culo il mio bro
