@@ -1,17 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import {
-  donazioniAttive,
-  segnaSupporter,
-  urlDonazione,
-} from "@/lib/donations-client";
+import { segnaSupporter, urlDonazione } from "@/lib/donations-client";
 
 /*
   Banner statico e non chiudibile (estensione sezione 9 del brief): a
-  differenza degli slide-in non ha logica di frequenza a sessione, sparisce
-  solo se manca il link di donazione o l'utente e' gia' segnato come
-  supporter. Usato in home e a fine quiz, con copy diversa per contesto.
+  differenza dei popup non ha nessuna logica di frequenza, ne' si spegne
+  per chi ha gia' donato. Sparisce solo senza un link di donazione
+  configurato. Usato in home e a fine quiz, con copy diversa per contesto.
+  urlDonazione() legge una env NEXT_PUBLIC_*, inlineata da Next.js allo
+  stesso modo lato server e lato client: nessun rischio di hydration
+  mismatch nel leggerla direttamente nel render.
 */
 export default function BannerDonazione({
   titolo = "Il Gayometro vive di offerte, non di pubblicità",
@@ -22,15 +20,8 @@ export default function BannerDonazione({
   testo?: string;
   testoBottone?: string;
 }) {
-  const [attiva, setAttiva] = useState(false);
-  const rafRef = useRef<number>(0);
-
-  useEffect(() => {
-    rafRef.current = requestAnimationFrame(() => setAttiva(donazioniAttive()));
-    return () => cancelAnimationFrame(rafRef.current);
-  }, []);
-
-  if (!attiva) return null;
+  const url = urlDonazione();
+  if (!url) return null;
 
   return (
     <section className="card flex flex-col gap-4 bg-sage px-6 py-6 sm:flex-row sm:items-center sm:justify-between">
@@ -39,7 +30,7 @@ export default function BannerDonazione({
         <p className="mt-1 max-w-prose">{testo}</p>
       </div>
       <a
-        href={urlDonazione()}
+        href={url}
         target="_blank"
         rel="noopener noreferrer"
         onClick={segnaSupporter}

@@ -99,9 +99,10 @@ dell'immagine), il sito ha:
   `NEXT_PUBLIC_DONATION_URL` è vuota.
 - **Banner statici** (`components/donations/BannerDonazione.tsx`): in home
   prima di "Ultime misurazioni" e in fondo al risultato del quiz. A
-  differenza dei popup non hanno logica di frequenza a sessione: restano
-  visibili finché c'è un link di donazione configurato e la persona non è
-  già segnata come supporter.
+  differenza dei popup non hanno nessuna logica di frequenza e non si
+  spengono mai per chi ha già donato: restano visibili finché c'è un link
+  di donazione configurato, punto. Un click sopprime comunque i popup per
+  30 giorni, solo i banner restano sempre lì.
 - **Popup dopo due misurazioni**: compare dopo la seconda valutazione
   Gayometro della sessione (il contatore riparte ad ogni sessione).
 - **Popup della frase seminata**: quando qualcuno genera esattamente la
@@ -279,8 +280,8 @@ Tutto resta moderabile anche dal `Table Editor` di Supabase:
 - [ ] Popup di benvenuto: compare al primo arrivo sul sito, non si
       ripresenta nella stessa sessione, nessuna richiesta di donazione
 - [ ] Banner statico in home e in fondo al risultato del quiz: visibile
-      solo con `NEXT_PUBLIC_DONATION_URL` configurata e persona non
-      supporter
+      con `NEXT_PUBLIC_DONATION_URL` configurata, resta visibile anche
+      dopo aver cliccato un link di donazione
 - [ ] Popup dopo la seconda misurazione Gayometro della sessione (non
       dopo la prima)
 - [ ] Dopo `npm run seed:donazioni`: la frase "chi non supporta questo
