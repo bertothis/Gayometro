@@ -1,6 +1,7 @@
 import Link from "next/link";
 import GayometroForm from "@/components/GayometroForm";
 import PhraseCard from "@/components/PhraseCard";
+import BannerDonazione from "@/components/donations/BannerDonazione";
 import { getDb } from "@/lib/db";
 import type { FraseRow } from "@/lib/types";
 import {
@@ -73,6 +74,8 @@ export default async function Home() {
       <section className="card px-6 py-6 sm:px-8 sm:py-8">
         <GayometroForm />
       </section>
+
+      <BannerDonazione />
 
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-4">

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import BannerDonazione from "@/components/donations/BannerDonazione";
 import {
   puoMostrare,
   segnaChiusura,
@@ -174,6 +175,13 @@ export default function ResultReveal({
                 Vai al Gayometro
               </Link>
             </div>
+          </div>
+
+          <div className="w-full">
+            <BannerDonazione
+              titolo="Il verdetto ti ha segnato? Restituisci il favore"
+              testo="Il quiz è gratis, il server no. Se il risultato meritava uno screenshot, merita anche un contributo."
+            />
           </div>
         </>
       )}

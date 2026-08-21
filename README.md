@@ -86,6 +86,48 @@ Esegue 30 frasi di test (attese alte, attese basse, attesi rifiuti,
 borderline con marchi) e scrive le tabelle dei risultati in
 `taratura.md`. L'elenco delle frasi vive in `scripts/taratura.ts`.
 
+## Donazioni: popup di benvenuto, banner statici e frase seminata
+
+Oltre ai tre touchpoint originari (interstitial pre risultato del quiz,
+slide-in 10 secondi dopo il risultato, modale dopo il download
+dell'immagine), il sito ha:
+
+- **Popup di benvenuto** (`components/WelcomeModal.tsx`): il primo popup
+  visto da chiunque arrivi sul sito, un disclaimer sul tono satirico senza
+  nessuna richiesta di donazione. Compare una volta per sessione e non fa
+  parte del sistema donazioni: resta attivo anche se
+  `NEXT_PUBLIC_DONATION_URL` è vuota.
+- **Banner statici** (`components/donations/BannerDonazione.tsx`): in home
+  prima di "Ultime misurazioni" e in fondo al risultato del quiz. A
+  differenza dei popup non hanno logica di frequenza a sessione: restano
+  visibili finché c'è un link di donazione configurato e la persona non è
+  già segnata come supporter.
+- **Popup dopo due misurazioni**: compare dopo la seconda valutazione
+  Gayometro della sessione (il contatore riparte ad ogni sessione).
+- **Popup della frase seminata**: quando qualcuno genera esattamente la
+  frase "chi non supporta questo sito" (percentuale fissa all'83%),
+  compare un popup dedicato 3 secondi dopo, con link diretto alla
+  donazione.
+
+I due nuovi popup seguono le stesse regole di frequenza degli originari
+(vedi `lib/donations-client.ts`): una volta a sessione, mai per chi è già
+segnato come supporter, sospesi dopo due chiusure senza click nella
+stessa sessione. Tutti e cinque i touchpoint di donazione (non il popup
+di benvenuto, che è un caso a parte) si spengono singolarmente da
+`donations.config.ts`.
+
+Per seminare la frase dedicata nel database:
+
+```bash
+npm run seed:donazioni
+```
+
+Script idempotente (`scripts/seed-frase-donazioni.ts`): crea la frase se
+manca, altrimenti aggiorna percentuale, verdetto e motivazione della riga
+esistente, più il primo commento firmato "Il Gayometro". Lo slug atteso
+dal popup lato client vive in `lib/frase-donazioni.ts`: se cambi il testo
+della frase nello script, aggiorna anche quella costante.
+
 ## Deploy su Vercel
 
 1. Importa il repository su [vercel.com](https://vercel.com) (piano
@@ -181,7 +223,9 @@ Tutto resta moderabile anche dal `Table Editor` di Supabase:
   sega...) le giudica l'AI col contesto, per non bloccare frasi legittime.
 - **Prompt del motore**: `lib/ai.ts`, incluse la taratura di riferimento
   e le regole di sicurezza. Dopo ogni modifica rilancia `npm run taratura`.
-- **Touchpoint donazioni**: `donations.config.ts`, tre boolean.
+- **Touchpoint donazioni**: `donations.config.ts`, cinque boolean. Dettagli
+  nella sezione "Donazioni: popup di benvenuto, banner statici e frase
+  seminata" più sotto.
 
 ## Costi
 
@@ -232,6 +276,15 @@ Tutto resta moderabile anche dal `Table Editor` di Supabase:
       per 30 giorni
 - [ ] Donazioni: dopo due chiusure nella stessa sessione, il terzo
       touchpoint non appare
+- [ ] Popup di benvenuto: compare al primo arrivo sul sito, non si
+      ripresenta nella stessa sessione, nessuna richiesta di donazione
+- [ ] Banner statico in home e in fondo al risultato del quiz: visibile
+      solo con `NEXT_PUBLIC_DONATION_URL` configurata e persona non
+      supporter
+- [ ] Popup dopo la seconda misurazione Gayometro della sessione (non
+      dopo la prima)
+- [ ] Dopo `npm run seed:donazioni`: la frase "chi non supporta questo
+      sito" risponde 83% e apre il popup dedicato 3 secondi dopo
 
 ## Struttura del progetto
 
@@ -240,7 +293,7 @@ app/                  pagine e API route (App Router)
 components/           componenti React, inclusi i pixel doodle e il gauge
 lib/                  motore AI, db, moderazione, rate limit, quiz
 supabase/             migration SQL da eseguire nella dashboard
-scripts/              batteria di taratura (npm run taratura)
+scripts/              taratura (npm run taratura) e seed donazioni (npm run seed:donazioni)
 assets/fonts/         woff per le immagini OG (licenza SIL OFL)
 donations.config.ts   interruttori dei touchpoint donazioni
 ```

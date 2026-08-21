@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "taratura": "tsx scripts/taratura.ts"
+    "taratura": "tsx scripts/taratura.ts",
+    "seed:donazioni": "tsx scripts/seed-frase-donazioni.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.116.0",

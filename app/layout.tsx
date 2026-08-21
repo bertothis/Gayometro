@@ -3,6 +3,7 @@ import { Fraunces, Inter, Silkscreen } from "next/font/google";
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
 import { Stellina } from "@/components/pixel/doodles";
+import WelcomeModal from "@/components/WelcomeModal";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -52,6 +53,7 @@ export default function RootLayout({
       className={`${fraunces.variable} ${inter.variable} ${silkscreen.variable}`}
     >
       <body className="flex min-h-dvh flex-col antialiased">
+        <WelcomeModal />
         <header className="border-b-2 border-ink bg-paper">
           <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-4 sm:px-6">
             <Link

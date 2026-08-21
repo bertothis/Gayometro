@@ -11,6 +11,7 @@ import { DONAZIONI, type Touchpoint } from "@/donations.config";
 
 const CHIAVE_SUPPORTER = "gm_supporter_fino_a";
 const CHIAVE_CHIUSURE = "gm_don_chiusure";
+const CHIAVE_VALUTAZIONI = "gm_don_valutazioni";
 const chiaveMostrato = (t: Touchpoint) => `gm_don_mostrato_${t}`;
 
 export function urlDonazione(): string {
@@ -39,6 +40,30 @@ export function puoMostrare(touchpoint: Touchpoint): boolean {
   if (window.sessionStorage.getItem(chiaveMostrato(touchpoint))) return false;
   if (chiusure() >= 2) return false;
   return true;
+}
+
+/*
+  Per i banner statici (non chiudibili, sempre in pagina): niente logica
+  di frequenza a sessione, solo link configurato e utente non gia'
+  supporter. Usata da BannerDonazione.
+*/
+export function donazioniAttive(): boolean {
+  if (!inBrowser()) return false;
+  if (!urlDonazione()) return false;
+  if (eSupporter()) return false;
+  return true;
+}
+
+/*
+  Contatore delle valutazioni Gayometro nella sessione corrente, usato per
+  il popup che arriva dopo la seconda misurazione. Riparte ad ogni sessione.
+*/
+export function incrementaValutazioni(): number {
+  if (!inBrowser()) return 0;
+  const nuovo =
+    (Number(window.sessionStorage.getItem(CHIAVE_VALUTAZIONI) ?? 0) || 0) + 1;
+  window.sessionStorage.setItem(CHIAVE_VALUTAZIONI, String(nuovo));
+  return nuovo;
 }
 
 export function segnaMostrato(touchpoint: Touchpoint) {

@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Gauge from "@/components/Gauge";
+import SlideInDonazione from "@/components/donations/SlideInDonazione";
+import { incrementaValutazioni } from "@/lib/donations-client";
+import { SLUG_FRASE_DONAZIONI } from "@/lib/frase-donazioni";
 import type { RispostaValuta } from "@/lib/types";
 
 type Fase =
@@ -23,6 +26,8 @@ export default function GayometroForm() {
   const [testo, setTesto] = useState("");
   const [fase, setFase] = useState<Fase>({ tipo: "attesa" });
   const [percentAnimato, setPercentAnimato] = useState(0);
+  const [popupDue, setPopupDue] = useState(false);
+  const [popupGotcha, setPopupGotcha] = useState(false);
   const rafRef = useRef<number>(0);
 
   useEffect(() => () => cancelAnimationFrame(rafRef.current), []);
@@ -63,6 +68,13 @@ export default function GayometroForm() {
       if (dati.stato === "ok") {
         setFase({ tipo: "risultato", frase: dati.frase });
         animaVerso(dati.frase.percent);
+        const conteggio = incrementaValutazioni();
+        /* Le due popup non devono mai sovrapporsi sulla stessa misurazione */
+        if (dati.frase.slug === SLUG_FRASE_DONAZIONI) {
+          setPopupGotcha(true);
+        } else if (conteggio >= 2) {
+          setPopupDue(true);
+        }
       } else if (dati.stato === "rifiutata") {
         setFase({ tipo: "rifiuto", messaggio: dati.messaggio });
       } else {
@@ -193,6 +205,24 @@ export default function GayometroForm() {
             Riprova
           </button>
         </div>
+      )}
+
+      {popupDue && (
+        <SlideInDonazione
+          touchpoint="dopoDueValutazioni"
+          ritardoMs={1500}
+          titolo="Tu e il tuo bro, due misurazioni dopo"
+          testo="Hai scoperto quanto tu e il tuo bro siete gay? Perfetto: se vuoi supportare questo progetto puoi farlo qui sotto. Dicono che chi non lo fa sia gay all’83%."
+        />
+      )}
+      {popupGotcha && (
+        <SlideInDonazione
+          touchpoint="fraseSegreta"
+          ritardoMs={3000}
+          titolo="Visto? Forse non dovresti far parte di questo 83%"
+          testo="Il Gayometro ha già la sentenza pronta per chi non contribuisce. Cambia statistica quando vuoi."
+          testoBottone="Tirami fuori dall’83%"
+        />
       )}
     </div>
   );
