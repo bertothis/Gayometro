@@ -6,7 +6,14 @@ import FraseAdminRow from "@/components/admin/FraseAdminRow";
 import CommentoAdminRow, {
   type CommentoAdmin,
 } from "@/components/admin/CommentoAdminRow";
-import { cookieAdminValido, COOKIE_ADMIN } from "@/lib/admin";
+import LoginForm from "@/components/admin/LoginForm";
+import LogoutButton from "@/components/admin/LogoutButton";
+import {
+  COOKIE_GATE,
+  COOKIE_SESSION,
+  cookieGateValido,
+  tokenSessioneValido,
+} from "@/lib/admin";
 import { getDb } from "@/lib/db";
 import type { FraseRow } from "@/lib/types";
 
@@ -18,10 +25,12 @@ export const metadata: Metadata = {
 };
 
 /*
-  Pannello nascosto del proprietario. Senza il cookie ottenuto con la
-  chiave segreta (vedi lib/admin.ts) la pagina risponde 404: per il resto
-  del mondo non esiste. Qui vivono l'archivio completo delle frasi con i
-  comandi di taratura e la moderazione di tutti i commenti.
+  Pannello nascosto del proprietario, due livelli (vedi lib/admin.ts):
+  senza il cookie del gate la pagina risponde 404, come se non esistesse.
+  Con il gate ma senza una sessione valida mostra il login (email +
+  password + TOTP). Solo con una sessione valida mostra l'archivio
+  completo delle frasi con i comandi di taratura e la moderazione di
+  tutti i commenti.
 */
 
 const PER_PAGINA = 20;
@@ -129,8 +138,11 @@ export default async function Admin({
   }>;
 }) {
   const negozio = await cookies();
-  if (!cookieAdminValido(negozio.get(COOKIE_ADMIN)?.value)) {
+  if (!cookieGateValido(negozio.get(COOKIE_GATE)?.value)) {
     notFound();
+  }
+  if (!tokenSessioneValido(negozio.get(COOKIE_SESSION)?.value)) {
+    return <LoginForm />;
   }
 
   const parametri = await searchParams;
@@ -162,12 +174,17 @@ export default async function Admin({
   return (
     <div className="flex flex-col gap-10">
       <header className="flex flex-col gap-2">
-        <p className="pixel-label text-xs uppercase text-rust">
-          Area riservata al titolare
-        </p>
-        <h1 className="font-display text-4xl font-black tracking-tight">
-          Sala macchine
-        </h1>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="pixel-label text-xs uppercase text-rust">
+              Area riservata al titolare
+            </p>
+            <h1 className="font-display text-4xl font-black tracking-tight">
+              Sala macchine
+            </h1>
+          </div>
+          <LogoutButton />
+        </div>
         <p className="max-w-prose">
           Archivio completo e moderazione. Da qui puoi correggere una
           percentuale a mano, far rivalutare una frase dal motore aggiornato,

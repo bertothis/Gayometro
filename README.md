@@ -68,7 +68,11 @@ server: mai nel browser, mai committata.
 | `SUPABASE_URL` | sì | URL del progetto Supabase |
 | `SUPABASE_SERVICE_ROLE_KEY` | sì | Chiave service role (segreta) |
 | `IP_HASH_SALT` | sì | Stringa lunga casuale qualsiasi: sala l'hash degli IP per l'antispam |
-| `ADMIN_SECRET` | sì | Chiave del pannello nascosto `/admin` (minimo 8 caratteri, consigliata lunga e casuale) |
+| `ADMIN_GATE_SECRET` | sì | Rivela il form di login di `/admin` al posto del 404. Generata con `npm run admin:setup` |
+| `ADMIN_SESSION_SECRET` | sì | Firma il cookie di sessione dopo il login. Generata con `npm run admin:setup` |
+| `ADMIN_EMAIL` | sì | Email dell'unico amministratore. Generata con `npm run admin:setup` |
+| `ADMIN_PASSWORD_HASH` | sì | Hash bcrypt della password, codificato in base64. Generato con `npm run admin:setup` |
+| `ADMIN_TOTP_SECRET` | sì | Segreto per il codice a 6 cifre (Google Authenticator, Authy...). Generato con `npm run admin:setup` |
 | `QUIZ_GATE` | no | `off` in v1. Predisposizione del futuro sblocco quiz (sezione paywall) |
 | `NEXT_PUBLIC_DONATION_URL` | no | Link esterno donazioni (Ko-fi, PayPal.me...). Se vuoto, nessun touchpoint donazioni appare |
 | `NEXT_PUBLIC_SITE_URL` | sì | URL pubblico del sito (in locale `http://localhost:3000`), usato da metadata e card OG |
@@ -182,12 +186,30 @@ eseguire il file sql su un progetto nuovo.
 
 ## Pannello admin nascosto (/admin)
 
-Il pannello del titolare non ha login né link: per chiunque non abbia il
-cookie risponde 404, come una pagina inesistente.
+L'accesso ha due livelli indipendenti. Il primo e' solo offuscamento
+(nasconde l'esistenza della pagina); il secondo e' la vera sicurezza
+(password + autenticazione a due fattori).
 
-- **Primo accesso**: visita `https://tuo-dominio/admin?chiave=ADMIN_SECRET`
-  (il valore impostato nella env). Il sito scambia la chiave con un cookie
-  httpOnly di 30 giorni e ripulisce l'URL: da lì in poi basta `/admin`.
+- **Genera le credenziali** (una volta sola): `npm run admin:setup`.
+  Ti chiede email e password, poi stampa cinque righe da incollare in
+  `.env.local` (e nelle env di Vercel al deploy) e un QR code da
+  scansionare con Google Authenticator, Authy, 1Password o un'app TOTP
+  qualsiasi.
+- **Primo accesso**: visita `https://tuo-dominio/admin?entra=ADMIN_GATE_SECRET`
+  (il valore stampato dallo script). Il sito scambia la chiave con un
+  cookie httpOnly di un anno e ripulisce l'URL: da lì in poi `/admin`
+  mostra un vero form di login invece del 404. Chi non conosce questo
+  link non sa nemmeno che la pagina esiste.
+- **Login**: email + password + codice a 6 cifre dall'app authenticator.
+  Sessione valida 7 giorni, verificata lato server ad ogni richiesta (non
+  solo affidata alla scadenza del cookie). "Esci" chiude la sessione
+  senza dimenticare il link segreto.
+- **Se perdi l'accesso** all'app authenticator: rilancia
+  `npm run admin:setup`, aggiorna le variabili nelle env di Vercel e
+  rifai il deploy. Non c'è un flusso di recupero via email: è un
+  progetto con un solo amministratore.
+- **Tentativi di login** limitati dal rate limiting (8 per coppia
+  IP+cookie tecnico, 20 per IP, ogni ora).
 - **Cosa contiene**: l'archivio completo delle frasi (Recenti, Più gay,
   Meno gay, ricerca, paginazione) e tutti i commenti del sito, flaggati
   inclusi.
@@ -196,8 +218,11 @@ cookie risponde 404, come una pagina inesistente.
   ufficiale del Gayometro), nasconderla o ripristinarla, eliminarla per
   sempre (alla prossima richiesta verrà rivalutata da zero).
 - **Comandi per commento**: nascondere, ripristinare, eliminare.
-- Tienilo per te: chi conosce la chiave entra. Se la chiave gira, cambiala
-  nella env e rientra con la nuova.
+- Tieni il link segreto per te, ma non è la vera protezione: anche se
+  girasse, chi lo trova vede solo un form di login che senza password e
+  codice TOTP non porta da nessuna parte. Se vuoi comunque cambiarlo,
+  rilancia `npm run admin:setup` (rigenera anche le altre credenziali)
+  e aggiorna le env.
 
 ## Moderazione manuale dalla dashboard Supabase (alternativa)
 
@@ -265,8 +290,10 @@ Tutto resta moderabile anche dal `Table Editor` di Supabase:
       pausa
 - [ ] Quiz completo da mobile: 20 domande, barra di avanzamento,
       risultato animato
-- [ ] Pannello admin: /admin risponde 404 senza cookie, entra con
-      ?chiave=, rivalutazione e correzione percentuale funzionano
+- [ ] Pannello admin: /admin risponde 404 senza il cookie del gate,
+      `?entra=` rivela il login, credenziali sbagliate rifiutate, login
+      con password + TOTP corretti funziona, "Esci" torna al login (non
+      al 404), rivalutazione e correzione percentuale funzionano
 - [ ] Immagine risultato scaricata e condivisa su WhatsApp con anteprima
       OG corretta
 - [ ] `/api/keep-alive` risponde 200
@@ -293,7 +320,8 @@ app/                  pagine e API route (App Router)
 components/           componenti React, inclusi i pixel doodle e il gauge
 lib/                  motore AI, db, moderazione, rate limit, quiz
 supabase/             migration SQL da eseguire nella dashboard
-scripts/              taratura (npm run taratura) e seed donazioni (npm run seed:donazioni)
+scripts/              taratura (npm run taratura), seed donazioni (npm run seed:donazioni)
+                      e credenziali admin (npm run admin:setup)
 assets/fonts/         woff per le immagini OG (licenza SIL OFL)
 donations.config.ts   interruttori dei touchpoint donazioni
 ```
@@ -309,3 +337,6 @@ donations.config.ts   interruttori dei touchpoint donazioni
   sicurezza sul solo IP.
 - La chiave API Anthropic vive solo nelle env del server, mai nel bundle
   client.
+- Pannello admin a due livelli: un link segreto nasconde l'esistenza
+  della pagina, password + TOTP a due fattori proteggono l'accesso vero.
+  Vedi "Pannello admin nascosto" sopra.

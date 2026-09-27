@@ -8,24 +8,30 @@
     "start": "next start",
     "lint": "eslint",
     "taratura": "tsx scripts/taratura.ts",
-    "seed:donazioni": "tsx scripts/seed-frase-donazioni.ts"
+    "seed:donazioni": "tsx scripts/seed-frase-donazioni.ts",
+    "admin:setup": "tsx scripts/admin-setup.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.116.0",
     "@supabase/supabase-js": "^2.112.3",
     "@vercel/analytics": "^2.0.1",
-    "next": "16.3.0",
+    "bcryptjs": "^3.0.3",
+    "next": "16.3.6",
+    "otpauth": "^9.5.2",
+    "qrcode": "^1.5.4",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.3.0",
+    "eslint-config-next": "16.3.6",
     "tailwindcss": "^4",
     "tsx": "^4.23.12",
     "typescript": "^5"

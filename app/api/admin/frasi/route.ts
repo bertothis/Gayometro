@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getDb } from "@/lib/db";
-import { cookieAdminValido, COOKIE_ADMIN } from "@/lib/admin";
+import { tokenSessioneValido, COOKIE_SESSION } from "@/lib/admin";
 import { valutaFrase, ErroreMotoreAI } from "@/lib/ai";
 import { possibileNomeProprio } from "@/lib/moderation";
 import type { FraseRow } from "@/lib/types";
@@ -17,7 +17,7 @@ function errore(messaggio: string, status: number): NextResponse<Esito> {
 }
 
 export async function POST(req: NextRequest) {
-  if (!cookieAdminValido(req.cookies.get(COOKIE_ADMIN)?.value)) {
+  if (!tokenSessioneValido(req.cookies.get(COOKIE_SESSION)?.value)) {
     return new NextResponse(null, { status: 404 });
   }
 

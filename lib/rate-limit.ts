@@ -12,6 +12,8 @@ export const LIMITI = {
   valuta: { coppia: 30, ip: 150 },
   commento: { coppia: 10, ip: 50 },
   quiz: { coppia: 60, ip: 240 },
+  /* Stretto apposta: qui si tenta password + TOTP, non c'e' CGNAT da proteggere */
+  loginAdmin: { coppia: 8, ip: 20 },
 } as const;
 
 export type Azione = keyof typeof LIMITI;
