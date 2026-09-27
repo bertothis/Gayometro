@@ -20,7 +20,7 @@ async function sha256Hex(testo: string): Promise<string> {
     .join("");
 }
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   if (req.nextUrl.pathname === "/admin") {
     const chiave = req.nextUrl.searchParams.get("chiave");
     const segreto = process.env.ADMIN_SECRET;

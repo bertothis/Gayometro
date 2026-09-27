@@ -5,13 +5,13 @@ import { createHash } from "crypto";
   Accesso al pannello nascosto /admin.
 
   Niente pagina di login, niente bottoni: si entra UNA volta con
-  /admin?chiave=ADMIN_SECRET (il middleware scambia la chiave con un
+  /admin?chiave=ADMIN_SECRET (il proxy scambia la chiave con un
   cookie httpOnly di 30 giorni) e da li' in poi basta visitare /admin.
   Per chiunque altro la pagina risponde 404, indistinguibile da una
   pagina inesistente.
 
   Il cookie contiene l'hash del segreto, non il segreto: lo stesso hash
-  viene calcolato qui (runtime Node) e nel middleware (runtime edge).
+  viene calcolato qui (runtime Node) e nel proxy (runtime edge).
 */
 
 export const COOKIE_ADMIN = "gm_admin";
