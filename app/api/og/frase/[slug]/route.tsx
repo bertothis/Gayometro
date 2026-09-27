@@ -97,6 +97,7 @@ export async function GET(
           >
             <div
               style={{
+                display: "flex",
                 fontFamily: "Silkscreen",
                 fontSize: 190,
                 lineHeight: 1,
@@ -107,6 +108,7 @@ export async function GET(
             </div>
             <div
               style={{
+                display: "flex",
                 fontFamily: "Fraunces",
                 fontSize: 44,
                 color: OG.ink,
@@ -139,6 +141,7 @@ export async function GET(
             <BarraPixel percent={frase.percent} />
             <div
               style={{
+                display: "flex",
                 fontFamily: "Inter",
                 fontSize: 22,
                 color: OG.ink,

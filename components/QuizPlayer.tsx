@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { DomandaServita } from "@/lib/quiz-questions";
 import type { RispostaQuiz } from "@/lib/types";
@@ -21,10 +21,15 @@ export default function QuizPlayer({
   domande: DomandaServita[];
 }) {
   const router = useRouter();
-  const [indice, setIndice] = useState(0);
   const [risposte, setRisposte] = useState<Risposta[]>([]);
   const [stato, setStato] = useState<Stato>("gioco");
   const richiestaRef = useRef<Promise<string> | null>(null);
+  /* Blocca i click doppi mentre la risposta e' in fase di registrazione:
+     senza questa guardia un tap rapido (comune su mobile) puo' leggere
+     l'indice della domanda prima che React lo aggiorni e far perdere
+     silenziosamente una risposta. */
+  const inCorsoRef = useRef(false);
+  const indice = risposte.length;
 
   /* Il POST parte subito dopo l'ultima risposta: mentre l'utente guarda
      l'interstitial il punteggio e' gia' in viaggio */
@@ -52,15 +57,21 @@ export default function QuizPlayer({
     }
   }
 
+  /* Libera la guardia solo dopo che React ha committato la nuova
+     domanda: cosi' un secondo click nello stesso instante del primo
+     (doppio tap) viene ignorato invece di far avanzare di due. */
+  useEffect(() => {
+    inCorsoRef.current = false;
+  }, [risposte]);
+
   function rispondi(opzioneId: string) {
-    if (stato !== "gioco") return;
+    if (stato !== "gioco" || inCorsoRef.current) return;
+    inCorsoRef.current = true;
+
     const nuova = [...risposte, { domanda: domande[indice].id, opzione: opzioneId }];
     setRisposte(nuova);
 
-    if (indice + 1 < domande.length) {
-      setIndice(indice + 1);
-      return;
-    }
+    if (nuova.length < domande.length) return;
 
     avviaCalcolo(nuova);
     if (puoMostrare("interstitial")) {

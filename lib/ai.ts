@@ -169,6 +169,26 @@ function senzaTrattiniLunghi(testo: string): string {
   return testo.replace(/\s*[—–]\s*/g, ", ").replace(/,\s*,/g, ",");
 }
 
+/*
+  Se il modello supera il limite di caratteri, un taglio secco a meta'
+  parola produce frasi rotte ("siamo nel terri"). Tronchiamo sull'ultimo
+  confine di frase entro il limite, o sull'ultimo spazio come ripiego.
+*/
+function troncaAConfine(testo: string, max: number): string {
+  if (testo.length <= max) return testo;
+  const tagliato = testo.slice(0, max);
+  const ultimoConfineFrase = Math.max(
+    tagliato.lastIndexOf(". "),
+    tagliato.lastIndexOf("! "),
+    tagliato.lastIndexOf("? ")
+  );
+  if (ultimoConfineFrase > max * 0.4) {
+    return tagliato.slice(0, ultimoConfineFrase + 1).trim();
+  }
+  const ultimoSpazio = tagliato.lastIndexOf(" ");
+  return (ultimoSpazio > 0 ? tagliato.slice(0, ultimoSpazio) : tagliato).trim();
+}
+
 function testoDaRisposta(risposta: Anthropic.Message): string {
   const blocco = risposta.content.find((b) => b.type === "text");
   if (!blocco || blocco.type !== "text" || !blocco.text.trim()) {
@@ -254,14 +274,18 @@ export async function valutaFrase(
       }
       const allowed = d.allowed;
       const percent = Math.max(0, Math.min(100, Math.round(d.percent)));
-      const verdict = senzaTrattiniLunghi(comeStringa(d.verdict)).slice(0, 60);
-      const motivation = senzaTrattiniLunghi(comeStringa(d.motivation)).slice(
-        0,
+      const verdict = troncaAConfine(
+        senzaTrattiniLunghi(comeStringa(d.verdict)),
+        60
+      );
+      const motivation = troncaAConfine(
+        senzaTrattiniLunghi(comeStringa(d.motivation)),
         280
       );
-      const rejection = senzaTrattiniLunghi(
-        comeStringa(d.rejection_message)
-      ).slice(0, 200);
+      const rejection = troncaAConfine(
+        senzaTrattiniLunghi(comeStringa(d.rejection_message)),
+        200
+      );
 
       if (allowed && (!verdict || !motivation)) {
         throw new Error("valutazione accettata ma senza verdetto o motivazione");
@@ -295,7 +319,7 @@ export async function moderaCommento(
       }
       return {
         allowed: d.allowed,
-        reason: senzaTrattiniLunghi(comeStringa(d.reason)).slice(0, 200),
+        reason: troncaAConfine(senzaTrattiniLunghi(comeStringa(d.reason)), 200),
       };
     },
   });
