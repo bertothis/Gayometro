@@ -8,11 +8,11 @@ Va aggiornato ad ogni sessione di lavoro rilevante, non solo letto.
 ## Dove vive il progetto
 
 - Repository: `bertothis/Gayometro`
-- Branch di lavoro attivo: `claude/gayometro-platform-yb52if`
-  (non `main`: `main` è ancora fermo al commit iniziale, il branch di lavoro
-  non è mai stato mergiato)
-- Non esiste una pull request aperta per questo branch al momento della
-  stesura di questa nota
+- Branch di produzione: `main` (la PR #1 con tutto il lavoro è stata
+  mergiata il 2026-10-14). Per nuove modifiche lavora su un branch
+  separato, apri una PR e fai merge: Vercel pubblica da `main`
+- Online su Vercel: `https://gayometroo.vercel.app` (dominio definitivo
+  ancora da acquistare e collegare)
 
 ## Come riprendere da un computer nuovo
 
@@ -57,13 +57,37 @@ Va aggiornato ad ogni sessione di lavoro rilevante, non solo letto.
     non si sopprimono più per chi ha già donato, a differenza dei popup
     che continuano a rispettare il flag supporter di 30 giorni
 
+11. Pannello admin con login email + password (bcrypt) + TOTP a due
+    fattori, link segreto `?entra=` che rivela il login (altrimenti 404),
+    sessione firmata di 7 giorni, rate limit sui tentativi
+    (`npm run admin:setup` genera le credenziali)
+12. Correzioni dal test end-to-end: motivazioni AI troncate a metà parola,
+    doppio tap nel quiz, immagini OG che andavano in 500 (Satori)
+13. Quiz v2: 240 domande (pool in `lib/quiz-data/`), tono più cattivo,
+    10 fasce, punteggio calibrato con simulazione, domande decisive a
+    peso doppio, opzioni mescolate, battute personalizzate sulle risposte,
+    sfida tra amici (`/quiz/gioca?sfida=ID`) con duello, testi WhatsApp
+    provocatori, card OG "Batti il mio X%"
+
 ## Aperti, da verificare o decidere
 
-- Checklist di test manuale nel README: da eseguire con credenziali reali,
-  nessuna voce confermata
-- Nessuna pull request creata per questo branch verso `main`
-- Dominio definitivo non ancora deciso (placeholder in uso)
-- Deploy su Vercel non ancora effettuato da questa sessione
+- Eseguire UNA volta `supabase/aggiornamenti/2026-10-quiz-highlights.sql`
+  nel SQL Editor di Supabase: senza, il quiz funziona ma non mostra le
+  battute personalizzate sulle risposte
+- Dominio definitivo da acquistare e collegare su Vercel, poi aggiornare
+  `NEXT_PUBLIC_SITE_URL` (tipo Config, non Secret) e rifare il deploy
+- `NEXT_PUBLIC_CONTACT_EMAIL` non impostata: in `/info` compare un
+  segnaposto. Meglio una casella dedicata o un alias sul dominio
+- `KEEP_ALIVE_URL` da impostare su GitHub (Settings > Secrets and
+  variables > Actions > Variables) per non far andare in pausa Supabase
+- Dopo il lancio: `npm run quiz:statistiche` per verificare la
+  distribuzione reale delle fasce ed eventualmente ritarare
+  `scripts/calibra-quiz.ts`
+- Le frasi di test dei vecchi quiz restano nel database di produzione,
+  che per ora è lo stesso usato in locale
+- Strada per monetizzare discussa ma non decisa (merch, quiz a pagamento):
+  se arrivano incassi regolari serve il piano Vercel Pro e un
+  inquadramento fiscale
 
 ## Registro sessioni
 
@@ -94,3 +118,19 @@ Va aggiornato ad ogni sessione di lavoro rilevante, non solo letto.
   se si vuole evitare di reinserirle ogni volta
 - Prossimo passo concordato: valutare insieme se e come eseguire la
   checklist di test manuale con credenziali reali
+
+### 2026-10-14 e giorni seguenti
+
+- Sessione ripartita dal repository: ricostruito lo stato dai commit e dalla
+  conversazione incollata
+- Corretti tre bug (vedi fase 12), aggiornato Next.js a 16.4.0 (nuovi
+  avvisi di sicurezza su 16.3.x), 0 vulnerabilità in produzione
+- Nuovo login admin a due fattori (fase 11) e primo deploy su Vercel
+- Ripensato il quiz (fase 13). Nota tecnica: se manca la colonna
+  `highlights`, PostgREST risponde `PGRST204` (non `42703`): la route
+  `/api/quiz/risultato` gestisce entrambi i codici e ripiega sul salvataggio
+  senza battute
+- Nota tecnica: un hash bcrypt in `.env.local` viene troncato dal loader di
+  Next.js (espansione dei `$`), per questo `ADMIN_PASSWORD_HASH` è salvato
+  in base64
+

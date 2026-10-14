@@ -73,7 +73,7 @@ export async function GET(
             justifyContent: "space-between",
             backgroundColor: OG.paper,
             border: `6px solid ${OG.ink}`,
-            padding: "44px 60px",
+            padding: "34px 60px 30px",
           }}
         >
           <div
@@ -96,24 +96,14 @@ export async function GET(
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              gap: 8,
+              gap: 6,
             }}
           >
             <div
               style={{
-                fontFamily: "Inter",
-                fontSize: 30,
-                color: OG.ink,
-                opacity: 0.7,
-              }}
-            >
-              Quanto sei gay? Risultato:
-            </div>
-            <div
-              style={{
                 display: "flex",
                 fontFamily: "Silkscreen",
-                fontSize: 210,
+                fontSize: 190,
                 lineHeight: 1,
                 color: colore,
               }}
@@ -123,7 +113,7 @@ export async function GET(
             <div
               style={{
                 fontFamily: "Fraunces",
-                fontSize: 46,
+                fontSize: 42,
                 color: OG.ink,
                 textAlign: "center",
                 maxWidth: 1000,
@@ -138,10 +128,23 @@ export async function GET(
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              gap: 18,
+              gap: 14,
             }}
           >
             <BarraPixel percent={sessione.score} />
+            <div
+              style={{
+                display: "flex",
+                backgroundColor: OG.rust,
+                border: `4px solid ${OG.ink}`,
+                color: OG.paper,
+                fontFamily: "Silkscreen",
+                fontSize: 32,
+                padding: "8px 30px",
+              }}
+            >
+              {`BATTI IL MIO ${sessione.score}%`}
+            </div>
             <div
               style={{
                 display: "flex",
@@ -151,7 +154,7 @@ export async function GET(
                 opacity: 0.6,
               }}
             >
-              fai il quiz anche tu · {urlSito()}
+              {`Quanto sei gay? ${urlSito()}`}
             </div>
           </div>
         </div>

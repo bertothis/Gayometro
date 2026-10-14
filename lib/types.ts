@@ -28,6 +28,8 @@ export type QuizSessionRow = {
   score: number;
   band_title: string;
   paid: boolean;
+  /* Battute personalizzate sulle risposte date; null per i quiz vecchi */
+  highlights: string[] | null;
   created_at: string;
 };
 

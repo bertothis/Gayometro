@@ -17,8 +17,11 @@ type Stato = "gioco" | "interstitial" | "calcolo" | "errore";
 
 export default function QuizPlayer({
   domande,
+  sfida,
 }: {
   domande: DomandaServita[];
+  /* Id del risultato dell'amico da battere, se si arriva da una sfida */
+  sfida?: string;
 }) {
   const router = useRouter();
   const [risposte, setRisposte] = useState<Risposta[]>([]);
@@ -51,7 +54,7 @@ export default function QuizPlayer({
     try {
       const id = await richiestaRef.current;
       if (!id) throw new Error("risultato mancante");
-      router.push(`/quiz/r/${id}`);
+      router.push(`/quiz/r/${id}${sfida ? `?sfida=${sfida}` : ""}`);
     } catch {
       setStato("errore");
     }

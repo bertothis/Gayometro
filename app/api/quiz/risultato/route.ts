@@ -1,15 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getDb } from "@/lib/db";
-import { domandaPerId } from "@/lib/quiz-questions";
 import { fasciaPerScore } from "@/lib/quiz-bands";
+import { calcolaEsito, type RispostaData } from "@/lib/quiz-scoring";
 import { azioneConsentita } from "@/lib/rate-limit";
 import type { RispostaQuiz } from "@/lib/types";
 
 /*
   Punteggio calcolato SOLO lato server (sezione 6.1 del brief): il client
   invia gli id delle domande servite e delle opzioni scelte, il server
-  valida che siano 15 domande esistenti e distinte con opzioni valide e
-  ricalcola i pesi dai dati propri, mai da valori inviati dal client.
+  valida che siano 20 domande esistenti e distinte con opzioni valide e
+  ricalcola pesi, calibrazione e battute dai dati propri, mai da valori
+  inviati dal client (vedi lib/quiz-scoring.ts).
 */
 
 const DOMANDE_RICHIESTE = 20;
@@ -18,17 +19,16 @@ function errore(messaggio: string, status: number): NextResponse<RispostaQuiz> {
   return NextResponse.json({ stato: "errore", messaggio }, { status });
 }
 
-/* Hash deterministico delle risposte, per la falsa precisione */
-function hashRisposte(risposte: Array<{ domanda: string; opzione: string }>) {
-  const testo = risposte
-    .map((r) => `${r.domanda}:${r.opzione}`)
-    .sort()
-    .join("|");
-  let h = 5381;
-  for (let i = 0; i < testo.length; i++) {
-    h = (h * 33) ^ testo.charCodeAt(i);
-  }
-  return h >>> 0;
+/* Colonna inesistente: il database non ha ancora l'aggiornamento
+   highlights (supabase/aggiornamenti), il quiz funziona lo stesso.
+   Postgres risponde 42703, PostgREST (Supabase) PGRST204. */
+function colonnaMancante(err: { code?: string; message?: string } | null) {
+  return (
+    err !== null &&
+    (err.code === "42703" ||
+      err.code === "PGRST204" ||
+      /highlights/.test(err.message ?? ""))
+  );
 }
 
 export async function POST(req: NextRequest) {
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     return errore(`Servono esattamente ${DOMANDE_RICHIESTE} risposte.`, 400);
   }
 
-  const risposte: Array<{ domanda: string; opzione: string }> = [];
+  const risposte: RispostaData[] = [];
   const visti = new Set<string>();
   for (const voce of body.risposte) {
     if (
@@ -63,34 +63,8 @@ export async function POST(req: NextRequest) {
     risposte.push({ domanda, opzione });
   }
 
-  /* Ricalcolo dei pesi dai dati lato server */
-  let somma = 0;
-  let minimo = 0;
-  let massimo = 0;
-  for (const r of risposte) {
-    const domanda = domandaPerId(r.domanda);
-    if (!domanda) return errore("Domanda sconosciuta.", 400);
-    const opzione = domanda.opzioni.find((o) => o.id === r.opzione);
-    if (!opzione) return errore("Opzione non valida.", 400);
-    const pesi = domanda.opzioni.map((o) => o.peso);
-    somma += opzione.peso;
-    minimo += Math.min(...pesi);
-    massimo += Math.max(...pesi);
-  }
-
-  let score =
-    massimo === minimo
-      ? 50
-      : Math.round(((somma - minimo) / (massimo - minimo)) * 100);
-
-  /* Falsa precisione: mai numeri tondi. 67%, non 70%. */
-  if (score % 5 === 0) {
-    const h = hashRisposte(risposte);
-    const scarto = 1 + (h % 4);
-    score += (h >> 3) % 2 === 0 ? -scarto : scarto;
-    score = Math.max(1, Math.min(99, score));
-    if (score % 5 === 0) score += 1;
-  }
+  const esito = calcolaEsito(risposte);
+  if (!esito) return errore("Domanda o opzione non valida.", 400);
 
   try {
     if (!(await azioneConsentita(req, "quiz"))) {
@@ -100,12 +74,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const fascia = fasciaPerScore(score);
-    const { data, error } = await getDb()
+    const fascia = fasciaPerScore(esito.score);
+    const db = getDb();
+    let { data, error } = await db
       .from("quiz_sessions")
-      .insert({ score, band_title: fascia.titolo })
+      .insert({
+        score: esito.score,
+        band_title: fascia.titolo,
+        highlights: esito.battute,
+      })
       .select("id")
       .single();
+
+    if (colonnaMancante(error)) {
+      ({ data, error } = await db
+        .from("quiz_sessions")
+        .insert({ score: esito.score, band_title: fascia.titolo })
+        .select("id")
+        .single());
+    }
     if (error) throw error;
 
     return NextResponse.json({

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import QuizPlayer from "@/components/QuizPlayer";
 import { pescaDomande } from "@/lib/quiz-questions";
+import { idSfidaValido } from "@/lib/quiz-sfida";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,11 @@ export const metadata: Metadata = {
   QUIZ_GATE (sezione 9.3 del brief). Default off: si gioca subito.
   Se un domani passa a on, qui apparira' la pagina di sblocco.
 */
-export default function Gioca() {
+export default async function Gioca({
+  searchParams,
+}: {
+  searchParams: Promise<{ sfida?: string }>;
+}) {
   if (process.env.QUIZ_GATE === "on") {
     return (
       <div className="mx-auto flex max-w-xl flex-col items-center gap-4 text-center">
@@ -32,5 +37,11 @@ export default function Gioca() {
   }
 
   /* Le 20 domande sono pescate lato server, senza pesi */
-  return <QuizPlayer domande={pescaDomande(20)} />;
+  const { sfida } = await searchParams;
+  return (
+    <QuizPlayer
+      domande={pescaDomande(20)}
+      sfida={idSfidaValido(sfida) ? sfida : undefined}
+    />
+  );
 }

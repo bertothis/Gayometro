@@ -9,7 +9,10 @@
     "lint": "eslint",
     "taratura": "tsx scripts/taratura.ts",
     "seed:donazioni": "tsx scripts/seed-frase-donazioni.ts",
-    "admin:setup": "tsx scripts/admin-setup.ts"
+    "admin:setup": "tsx scripts/admin-setup.ts",
+    "quiz:calibra": "tsx scripts/calibra-quiz.ts",
+    "quiz:controlla": "tsx scripts/controlla-quiz.ts",
+    "quiz:statistiche": "tsx scripts/statistiche-quiz.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.116.0",
