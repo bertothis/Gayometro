@@ -54,6 +54,26 @@ function supportaTemperature(modello: string): boolean {
   );
 }
 
+/*
+  I modelli recenti ragionano prima di rispondere (thinking adattivo, attivo
+  di default) e quel ragionamento consuma lo STESSO budget di max_tokens
+  della risposta. Con 400 token le frasi ambigue (es. a tema sessuale)
+  finivano il budget pensando: risposta vuota o JSON tagliato a meta', e
+  all'utente arrivava "si e' surriscaldato" (successo con claude-haiku-5-5).
+  Quindi: budget largo, e sforzo basso dove il modello lo supporta, perche'
+  un verdetto comico di tre righe non ha bisogno di ragionare a lungo.
+  L'effort viene mandato solo ai modelli che lo accettano (Haiku 4.5 lo
+  rifiuta con un 400).
+*/
+const TOKEN_BASE = 4000;
+const TOKEN_DOPO_TRONCAMENTO = 12000;
+
+function supportaEffort(modello: string): boolean {
+  return /^claude-(haiku-5|sonnet-5|opus-(4-[5-8]|5)|fable|mythos)/.test(
+    modello
+  );
+}
+
 let client: Anthropic | null = null;
 
 function getClient(): Anthropic {
@@ -103,7 +123,7 @@ REGOLE DI SICUREZZA, NON NEGOZIABILI:
 CAMPI DELL'OUTPUT:
 - allowed: true se la frase è valutabile, false se va rifiutata
 - percent: intero 0-100 (se allowed=false metti 0)
-- verdict: etichetta comica, massimo 6 parole (vuota se rifiuti)
+- verdict: etichetta comica e concreta sul tema della frase, massimo 6 parole. Evita le parole “sentenza”, “verdetto” e “inappellabile” e le formule che si ripetono da una frase all'altra: ogni etichetta deve sembrare scritta apposta per quella frase (vuota se rifiuti)
 - motivation: 2 o 3 frasi, massimo 280 caratteri, in italiano, mai trattini lunghi (vuota se rifiuti)
 - rejection_message: solo se rifiuti, in tono leggero (vuota se accetti)
 
@@ -216,11 +236,12 @@ async function chiamaConJson<T>(opts: {
   const modello = nomeModello();
   const richiesta: Anthropic.MessageCreateParamsNonStreaming = {
     model: modello,
-    max_tokens: 400,
+    max_tokens: TOKEN_BASE,
     system: opts.system,
     messages: [{ role: "user", content: opts.user }],
     output_config: {
       format: { type: "json_schema", schema: opts.schema },
+      ...(supportaEffort(modello) ? { effort: "low" as const } : {}),
     },
     ...(supportaTemperature(modello) ? { temperature: opts.temperature } : {}),
   };
@@ -233,6 +254,11 @@ async function chiamaConJson<T>(opts: {
       const risposta = await getClient().messages.create(richiesta);
       if (risposta.stop_reason === "refusal") {
         throw new Error("il modello ha rifiutato la richiesta");
+      }
+      if (risposta.stop_reason === "max_tokens") {
+        /* Ragionamento + risposta hanno finito il budget: il retry ne ha di piu' */
+        richiesta.max_tokens = TOKEN_DOPO_TRONCAMENTO;
+        throw new Error("risposta troncata dal limite di token");
       }
       const dati: unknown = JSON.parse(testoDaRisposta(risposta));
       return opts.valida(dati);
