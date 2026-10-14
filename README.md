@@ -14,8 +14,9 @@ Tre funzionalità:
    10 meno gay; ogni frase ha la sua pagina con thread di commenti aperto
    a chiunque, con nickname libero. L'archivio completo vive nel pannello
    admin nascosto.
-3. **Quiz "Quanto sei gay?"**: 20 domande pescate da un pool di 120,
-   risultato animato e immagine condivisibile. Zero chiamate AI, costo zero.
+3. **Quiz "Quanto sei gay?"**: 20 domande pescate da un pool di 240,
+   dieci fasce, battute sulle tue risposte, sfida tra amici e immagine
+   condivisibile. Zero chiamate AI, costo zero.
 
 Stack: Next.js (App Router) + TypeScript + Tailwind CSS v4, Supabase
 (Postgres, piano free), API Anthropic via `@anthropic-ai/sdk`, deploy su
@@ -240,10 +241,33 @@ Tutto resta moderabile anche dal `Table Editor` di Supabase:
 
 ## Modificare domande del quiz e blocklist
 
-- **Domande**: `lib/quiz-questions.ts`, pool di 120 con pesi da -2 a +2
-  per opzione (ogni sessione ne pesca 20). Le fasce di risultato sono in
-  `lib/quiz-bands.ts`. Dopo la modifica: commit e deploy, nessun altro
-  passaggio.
+- **Domande**: 240 domande in `lib/quiz-data/` (nove file per tema, da
+  `b01-bere.ts` a `b09-extra.ts`), ognuna con 3-5 opzioni e pesi da -2 a
+  +2. Ogni partita ne pesca 20 a caso e mescola anche l'ordine delle
+  opzioni. Le domande `qd(...)` sono "decisive" e pesano il doppio. Le
+  opzioni estreme hanno una *battuta*, la riga cattiva che il risultato
+  rimanda al giocatore. Gli id si assegnano per posizione: aggiungi
+  nuovi blocchi **in coda**, non riordinare.
+- **Controllo automatico**: `npm run quiz:controlla` verifica struttura,
+  pesi, lunghezze, trattini lunghi, duplicati e parole vietate. Lanciarlo
+  dopo ogni modifica alle domande.
+- **Calibrazione**: con venti domande i pesi si compensano e quasi tutti
+  finirebbero a metà scala. `npm run quiz:calibra` simula migliaia di
+  giocatori sul banco reale e scrive `lib/quiz-calibration.ts`, che
+  rimappa il punteggio perché le dieci fasce escano con frequenza simile.
+  **Va rilanciato ogni volta che cambiano domande o pesi.**
+- **Statistiche reali**: `npm run quiz:statistiche` mostra come si
+  distribuiscono i quiz giocati davvero. Se poche fasce dominano, ritara
+  `LIVELLI` e `SIGMA` in `scripts/calibra-quiz.ts` e ricalibra.
+- **Fasce**: dieci fasce da 10 punti in `lib/quiz-bands.ts`, con titolo e
+  cinque righe di profilo (il risultato ne mostra tre).
+- **Sfida tra amici**: il link `/quiz/r/ID` mostra il pulsante "Batti il
+  mio X%"; chi lo segue gioca con `?sfida=ID` e alla fine vede il duello.
+  I testi di condivisione provocatori sono in `lib/quiz-sfida.ts`.
+- **Battute personalizzate**: salvate nella colonna `highlights` di
+  `quiz_sessions`. Sui progetti Supabase già esistenti esegui UNA volta
+  `supabase/aggiornamenti/2026-10-quiz-highlights.sql` nel SQL Editor.
+  Finché non lo fai il quiz funziona, ma senza queste righe.
 - **Blocklist**: `lib/blocklist.ts`, divisa tra forme esatte e radici.
   Contiene solo termini inequivocabili: le parole ambigue (finocchio,
   sega...) le giudica l'AI col contesto, per non bloccare frasi legittime.

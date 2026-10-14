@@ -10,6 +10,12 @@ import {
   segnaSupporter,
   urlDonazione,
 } from "@/lib/donations-client";
+import {
+  battutaDuello,
+  percentualeConArticolo,
+  provocazione,
+  provocazioneDuello,
+} from "@/lib/quiz-sfida";
 
 /*
   Animazione risultato (sezione 6.2 del brief): la barra parte lenta e
@@ -30,11 +36,17 @@ export default function ResultReveal({
   score,
   titolo,
   righe,
+  battute,
+  rivale,
 }: {
   id: string;
   score: number;
   titolo: string;
   righe: string[];
+  /* Battute sulle risposte date dal giocatore (vuote per i quiz vecchi) */
+  battute: string[];
+  /* Risultato dell'amico da battere, se si arriva da una sfida */
+  rivale: { id: string; score: number; titolo: string } | null;
 }) {
   const [barra, setBarra] = useState(0);
   const [svelato, setSvelato] = useState(false);
@@ -101,10 +113,16 @@ export default function ResultReveal({
     }
   }
 
+  /* Il link condiviso porta alla pagina risultato: anteprima OG col punteggio
+     e pulsante "Batti il mio X%" per chi lo riceve */
+  const urlRisultato =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/quiz/r/${id}`
+      : "";
   const testoWhatsApp = encodeURIComponent(
-    `Ho fatto il quiz del Gayometro: sono gay al ${score}%, fascia "${titolo}". Fallo anche tu: ${
-      typeof window !== "undefined" ? `${window.location.origin}/quiz` : ""
-    }`
+    rivale
+      ? provocazioneDuello(score, rivale.score, urlRisultato)
+      : provocazione(score, titolo, urlRisultato)
   );
 
   return (
@@ -145,6 +163,49 @@ export default function ResultReveal({
             ))}
           </ul>
 
+          {battute.length > 0 && (
+            <div className="card w-full px-5 py-5 text-left">
+              <p className="pixel-label text-xs uppercase text-rust">
+                Le tue risposte parlano chiaro
+              </p>
+              <ul className="mt-2 flex flex-col gap-2">
+                {battute.map((battuta, i) => (
+                  <li key={i} className="italic">
+                    {battuta}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {rivale && (
+            <div className="card w-full px-5 py-6">
+              <p className="pixel-label text-xs uppercase text-rust">
+                Il duello
+              </p>
+              <div className="mt-3 flex items-end justify-center gap-6">
+                <div className="flex flex-col items-center">
+                  <span className="pixel-label text-5xl font-bold text-rust">
+                    {score}%
+                  </span>
+                  <span className="text-sm font-bold uppercase">Tu</span>
+                </div>
+                <span className="pb-6 font-display text-2xl font-black italic">
+                  contro
+                </span>
+                <div className="flex flex-col items-center">
+                  <span className="pixel-label text-5xl font-bold text-ink">
+                    {rivale.score}%
+                  </span>
+                  <span className="text-sm font-bold uppercase">Lui</span>
+                </div>
+              </div>
+              <p className="mt-3 font-display text-xl font-black italic">
+                {battutaDuello(score, rivale.score)}
+              </p>
+            </div>
+          )}
+
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button type="button" onClick={scaricaImmagine} className="btn">
               Scarica immagine
@@ -161,15 +222,15 @@ export default function ResultReveal({
 
           <div className="card mt-4 flex w-full flex-col items-center gap-3 px-6 py-6">
             <p className="font-display text-xl font-black">
-              Questo risultato ti rappresenta?
+              Pensi di poter fare di più?
             </p>
             <p className="text-sm">
-              Contesta la scienza: rifai il quiz o misura le tue abitudini una
-              per una.
+              Batti {percentualeConArticolo(score)} e dimostra che la lancetta ha torto. Chi lo
+              riceve da te ha le stesse armi: scegli bene a chi mandarlo.
             </p>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/quiz" className="btn btn-paper">
-                Fai il quiz anche tu
+              <Link href={`/quiz/gioca?sfida=${id}`} className="btn">
+                Batti il mio {score}%
               </Link>
               <Link href="/" className="btn btn-paper">
                 Vai al Gayometro

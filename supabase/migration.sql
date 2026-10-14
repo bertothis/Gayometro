@@ -41,6 +41,8 @@ create table quiz_sessions (
   score int not null check (score between 0 and 100),
   band_title text not null,
   paid boolean not null default false,
+  -- battute personalizzate sulle risposte date (puo' restare vuoto)
+  highlights text[] not null default '{}',
   created_at timestamptz not null default now()
 );
 
