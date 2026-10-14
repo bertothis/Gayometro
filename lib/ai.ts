@@ -37,12 +37,21 @@ function nomeModello(): string {
 
 /*
   Le famiglie di modelli Anthropic piu' recenti (Opus 4.7+, Opus 5,
-  Sonnet 5, Fable, Mythos) rifiutano il parametro temperature con un 400:
-  lo inviamo solo ai modelli che lo supportano, cosi' cambiare AI_MODEL
-  via env non rompe nulla.
+  Sonnet 5, Haiku 5, Fable, Mythos) rifiutano il parametro temperature con
+  un 400 ("temperature is deprecated for this model"). La lista qui sotto
+  evita la richiesta sprecata, ma non e' l'unica difesa: se arriva un
+  modello nuovo che la lista non conosce, chiamaConJson riconosce l'errore,
+  toglie il parametro, ritenta subito e si ricorda il modello. Cosi'
+  cambiare AI_MODEL via env non puo' piu' mandare in errore ogni frase
+  nuova (e' successo davvero con claude-haiku-5-5).
 */
+const MODELLI_SENZA_TEMPERATURE = new Set<string>();
+
 function supportaTemperature(modello: string): boolean {
-  return !/^claude-(opus-4-[78]|opus-5|sonnet-5|fable|mythos)/.test(modello);
+  if (MODELLI_SENZA_TEMPERATURE.has(modello)) return false;
+  return !/^claude-(opus-4-[78]|opus-5|sonnet-5|haiku-5|fable|mythos)/.test(
+    modello
+  );
 }
 
 let client: Anthropic | null = null;
@@ -228,6 +237,19 @@ async function chiamaConJson<T>(opts: {
       const dati: unknown = JSON.parse(testoDaRisposta(risposta));
       return opts.valida(dati);
     } catch (err) {
+      /* Modello che non accetta temperature: si toglie e si riprova subito,
+         senza consumare il tentativo riservato agli errori di formato */
+      if (
+        err instanceof Anthropic.APIError &&
+        err.status === 400 &&
+        /temperature/i.test(err.message) &&
+        richiesta.temperature !== undefined
+      ) {
+        MODELLI_SENZA_TEMPERATURE.add(modello);
+        delete richiesta.temperature;
+        tentativo--;
+        continue;
+      }
       ultimoErrore = err;
       /* Errori di configurazione (chiave sbagliata, modello inesistente,
          richiesta rifiutata dall'API): il retry non li aggiusta */
