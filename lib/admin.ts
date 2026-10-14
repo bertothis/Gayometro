@@ -6,16 +6,16 @@ import { TOTP, Secret } from "otpauth";
 /*
   Accesso al pannello nascosto /admin, in due livelli indipendenti.
 
-  Livello 1, GATE: un link con ?entra=ADMIN_GATE_SECRET (il middleware
+  Livello 1, GATE: un link con ?entra=ADMIN_GATE_SECRET (il proxy
   scambia il parametro con un cookie httpOnly di un anno) rivela il form
   di login al posto del 404. E' solo offuscamento, non e' la sicurezza
   vera: chi non conosce il link non sa nemmeno che esiste un login.
   Lo stesso hash viene calcolato qui (runtime Node, per la pagina) e nel
-  middleware (runtime edge, per lo scambio della chiave).
+  proxy (runtime edge, per lo scambio della chiave).
 
   Livello 2, SESSIONE: la sicurezza vera. Email + password + codice TOTP
   a 6 cifre (Google Authenticator, Authy, 1Password...), verificati SOLO
-  in una route Node (mai in edge middleware: bcrypt e TOTP non ci vivono
+  in una route Node (mai nel proxy edge: bcrypt e TOTP non ci vivono
   bene). Login riuscito -> token di sessione firmato con scadenza dentro
   il payload, controllata ad ogni richiesta lato server: un cookie
   copiato a mano non basta a ignorare la scadenza.

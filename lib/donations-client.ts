@@ -43,18 +43,6 @@ export function puoMostrare(touchpoint: Touchpoint): boolean {
 }
 
 /*
-  Per i banner statici (non chiudibili, sempre in pagina): niente logica
-  di frequenza a sessione, solo link configurato e utente non gia'
-  supporter. Usata da BannerDonazione.
-*/
-export function donazioniAttive(): boolean {
-  if (!inBrowser()) return false;
-  if (!urlDonazione()) return false;
-  if (eSupporter()) return false;
-  return true;
-}
-
-/*
   Contatore delle valutazioni Gayometro nella sessione corrente, usato per
   il popup che arriva dopo la seconda misurazione. Riparte ad ogni sessione.
 */
